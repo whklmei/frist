@@ -1,0 +1,75 @@
+<html><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>touch</title>
+    <meta content="yes" name="apple-mobile-web-app-capable">
+    <meta content="black" name="apple-mobile-web-app-status-bar-style">
+    <meta content="telephone=no" name="format-detection">
+    <script src="http://www.axyungou.com/statics/templates/yungou/js/mobile/common/jweixin.js" language="javascript" type="text/javascript"></script>
+    <script src="http://www.axyungou.com/statics/templates/yungou/js/mobile/common/jquery.min.js" language="javascript" type="text/javascript"></script>
+    <script src="index.js" language="javascript" type="text/javascript"></script>
+    <style>
+        *{
+            margin: 0;
+            padding:0;
+        }
+        .active {
+            width: 100%;
+            height: 100%;
+            background: #9ff5ee;
+        }
+        .vote {
+            position: fixed;
+            bottom:40px;
+            right: 15px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: yellow;
+        }
+    </style>
+</head>
+<body style="">
+<div class="active" id="active">
+     <a class="vote" id="vote" href="https://www.baidu.com"></a>
+</div>
+
+<script>
+window.onload=function(){ //当一个Web页面加载完成后就会触发执行window.onload 里的代码
+    var vote=document.getElementById("vote");//通过id取按钮这个节点
+    var active=document.getElementById("active");//通过id取按钮这个节点
+    function handleTouchEvent(e) {
+        //只跟踪一次触摸
+        var width=document.documentElement.clientWidth,height=document.documentElement.clientHeight; //这里取屏幕的可视宽度和可视高度来控制按钮的最大最小访问
+            switch (e.type) {
+                case "touchstart":   //触摸开始调用的方法
+                    console.log('start');
+                    break;
+                case "touchend":
+                        console.log('end');  //触摸结束调用的方法，这里不用用到这两个方法，所以不做详情介绍
+                    break;
+                case "touchmove": //全局触摸主要用到touchmove这个方法，touchmove过程中坐标会不断变化，取这个变化的坐标来控制当前那全局按钮#vote的坐标。使用style对象来修改目前的样式，其间做了一个控制，不让按钮可以移动上左下右任意方向的屏幕外我用了两层三目运算符来限制坐标的最小和最大值。
+                    document.getElementById("vote").style.left=parseInt(e.changedTouches[0].clientX) - 60 <= 0 || parseInt(e.changedTouches[0].clientX) >= width - 60 ? (parseInt(e.changedTouches[0].clientX) - 60 <= 0 ? 0 : width - 60) : parseInt(e.changedTouches[0].clientX);//左右方向，最小位置不小于按钮的直径，最大不超过屏幕的可视宽度减按钮直径，上下方向也是
+                    document.getElementById("vote").style.top=parseInt(e.changedTouches[0].clientY) - 60 <= 0 || parseInt(e.changedTouches[0].clientY) >= height - 60 ? (parseInt(e.changedTouches[0].clientY) - 60 <= 0 ? 0 : height-60) : parseInt(e.changedTouches[0].clientY); 
+                    break;
+            }
+
+    }
+    function clickA(e){
+        alert('aaaa')
+        e.stopPropagation();  //点击a#vote按钮，如果没有加入该行，点击事回出发a#vote和div#active的事件
+        e.preventDefault();//这里是点击事情，阻止了默认事件的触发，所以超链接不会跳转，没阻止的话超链接就会正常跳转了
+    }
+    function clickDiv(e){
+        alert('444')
+    }
+    vote.addEventListener("touchstart", handleTouchEvent, false);
+    vote.addEventListener("touchmove", handleTouchEvent, false);
+    vote.addEventListener("touchend", handleTouchEvent, false);
+    vote.addEventListener("click", clickA, false); 
+    active.addEventListener("click", clickDiv, false); 
+}
+</script>
+
+
+</body></html>
